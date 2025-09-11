@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout 3 - Linux Ricing Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="upper-nav">
+            UPPER NAV
+            <div class="nav-links">
+                <a href="layout1.html">Layout 1</a>
+                <a href="layout2.html">Layout 2</a>
+                <a href="layout3.html">Layout 3</a>
+                <a href="layout4.html">Layout 4</a>
+            </div>
+        </div>
+        
+        <div class="lower-nav">
+            Lower nav
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="aside aside-left">
+                <div class="scrollable-content">
+                    <h3>aside</h3>
+                    <p>Configuration Files & Dotfiles</p>
+                    <h4>Essential Configs:</h4>
+                    <ul>
+                        <li>.bashrc / .zshrc</li>
+                        <li>.vimrc / .config/nvim</li>
+                        <li>.Xresources</li>
+                        <li>.xinitrc</li>
+                        <li>.config/i3/config</li>
+                        <li>.config/polybar</li>
+                        <li>.config/rofi</li>
+                        <li>.config/alacritty</li>
+                        <li>.tmux.conf</li>
+                        <li>.gitconfig</li>
+                    </ul>
+                    <h4>Dotfiles Management:</h4>
+                    <ul>
+                        <li>GNU Stow - Symlink farm</li>
+                        <li>Chezmoi - Template system</li>
+                        <li>Yadm - Git wrapper</li>
+                        <li>Dotbot - Bootstrap tool</li>
+                        <li>Ansible - Automation</li>
+                        <li>Nix - Declarative config</li>
+                        <li>Homeshick - Git dotfiles</li>
+                    </ul>
+                    <h4>Best Practices:</h4>
+                    <ul>
+                        <li>Version control with Git</li>
+                        <li>Modular configurations</li>
+                        <li>Environment detection</li>
+                        <li>Backup strategies</li>
+                        <li>Documentation</li>
+                        <li>Cross-platform support</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="main">
+                <div class="scrollable-content">
+                    <h2>main</h2>
+                    <h3>Status Bars, Panels & System Monitoring</h3>
+                    <p>Status bars and system monitors are crucial for displaying system information and maintaining awareness of your system's state while working.</p>
+                    
+                    <h4>Popular Status Bars</h4>
+                    <ul>
+                        <li><strong>Polybar:</strong> Highly configurable with modules</li>
+                        <li><strong>i3bar:</strong> Default i3wm status bar</li>
+                        <li><strong>Waybar:</strong> Wayland-compatible bar</li>
+                        <li><strong>Lemonbar:</strong> Lightweight bar generator</li>
+                        <li><strong>Tint2:</strong> Panel/taskbar for lightweight DEs</li>
+                        <li><strong>Xmobar:</strong> Minimalistic status bar for XMonad</li>
+                        <li><strong>Dzen2:</strong> General purpose messaging and notification</li>
+                    </ul>
+                    
+                    <h4>System Monitoring Tools</h4>
+                    <ul>
+                        <li><strong>Conky:</strong> Lightweight system monitor for desktop</li>
+                        <li><strong>Htop:</strong> Interactive process viewer</li>
+                        <li><strong>Gotop:</strong> Terminal-based graphical activity monitor</li>
+                        <li><strong>Bashtop/Bpytop:</strong> Resource monitor with Vi keys</li>
+                        <li><strong>Glances:</strong> Cross-platform system monitoring</li>
+                        <li><strong>Vtop:</strong> Graphical activity monitor for CLI</li>
+                        <li><strong>Nmon:</strong> System performance tool</li>
+                    </ul>
+                    
+                    <h4>Status Bar Modules & Widgets</h4>
+                    <p>Common status bar information displays:</p>
+                    <ul>
+                        <li><strong>System Info:</strong> CPU usage, memory, temperature</li>
+                        <li><strong>Network:</strong> WiFi status, data usage, VPN</li>
+                        <li><strong>Audio:</strong> Volume level, current track</li>
+                        <li><strong>Time/Date:</strong> Clock, calendar, timezone</li>
+                        <li><strong>Battery:</strong> Charge level, power status</li>
+                        <li><strong>Workspace:</strong> Current desktop, window title</li>
+                        <li><strong>Weather:</strong> Current conditions, forecast</li>
+                        <li><strong>Custom Scripts:</strong> Cryptocurrency, stocks, etc.</li>
+                    </ul>
+                    
+                    <h4>Conky Configuration</h4>
+                    <p>Conky is particularly popular for desktop system monitoring:</p>
+                    <ul>
+                        <li>Lua scripting for advanced features</li>
+                        <li>Cairo graphics for smooth rendering</li>
+                        <li>Customizable layouts and positioning</li>
+                        <li>Integration with system sensors</li>
+                        <li>Real-time data updates</li>
+                        <li>Transparency and compositing support</li>
+                        <li>Multiple configuration profiles</li>
+                    </ul>
+                    
+                    <h4>Performance Considerations</h4>
+                    <p>Keep your system monitoring efficient:</p>
+                    <ul>
+                        <li>Optimize update intervals</li>
+                        <li>Minimize resource usage</li>
+                        <li>Use efficient data collection methods</li>
+                        <li>Consider impact on battery life</li>
+                        <li>Profile your configurations</li>
+                        <li>Disable unused modules</li>
+                    </ul>
+                    
+                    <p>Remember: A good status bar provides useful information without being distracting!</p>
+                </div>
+            </div>
+            
+            <div class="aside aside-right">
+                <div class="scrollable-content">
+                    <h3>aside</h3>
+                    <p>Themes & Visual Elements</p>
+                    <h4>GTK Themes:</h4>
+                    <ul>
+                        <li>Arc Theme</li>
+                        <li>Adapta</li>
+                        <li>Materia</li>
+                        <li>Orchis</li>
+                        <li>WhiteSur</li>
+                        <li>Qogir</li>
+                        <li>Layan</li>
+                        <li>Sweet</li>
+                        <li>Catppuccin</li>
+                        <li>Everforest</li>
+                    </ul>
+                    <h4>Icon Themes:</h4>
+                    <ul>
+                        <li>Papirus</li>
+                        <li>Tela</li>
+                        <li>Reversal</li>
+                        <li>Candy Icons</li>
+                        <li>BeautyLine</li>
+                        <li>Numix Circle</li>
+                        <li>La Capitaine</li>
+                        <li>Zafiro</li>
+                        <li>McMojave</li>
+                    </ul>
+                    <h4>Cursor Themes:</h4>
+                    <ul>
+                        <li>Bibata</li>
+                        <li>Capitaine</li>
+                        <li>Breeze</li>
+                        <li>Volantes</li>
+                        <li>Posy</li>
+                        <li>Oxygen</li>
+                    </ul>
+                    <h4>Fonts:</h4>
+                    <ul>
+                        <li>Nerd Fonts</li>
+                        <li>Fira Code</li>
+                        <li>JetBrains Mono</li>
+                        <li>Hack</li>
+                        <li>Source Code Pro</li>
+                        <li>Ubuntu Mono</li>
+                        <li>Cascadia Code</li>
+                        <li>Iosevka</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
