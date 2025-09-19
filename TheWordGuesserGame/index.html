@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Word Guesser Game</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 50%, #3b3b5c 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-container {
+            background: #cdd6f4;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            border: 2px solid #b4befe;
+        }
+        
+        h1 {
+            color: #1e1e2e;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        .word-display {
+            font-size: 3em;
+            letter-spacing: 0.2em;
+            margin: 20px 0;
+            color: #1e1e2e;
+            font-weight: bold;
+        }
+        
+        .hangman-display {
+            font-family: monospace;
+            white-space: pre-line;
+            margin: 20px 0;
+            color: #f38ba8;
+            font-size: 1.2em;
+        }
+        
+        .input-section {
+            margin: 20px 0;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid #89b4fa;
+            border-radius: 5px;
+            text-align: center;
+            width: 50px;
+            background: #f5c2e7;
+            color: #1e1e2e;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background: #89b4fa;
+            color: #1e1e2e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #74c7ec;
+        }
+        
+        .info {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f5c2e7;
+            border-radius: 5px;
+            color: #1e1e2e;
+        }
+        
+        .reward {
+            color: #a6e3a1;
+            font-weight: bold;
+        }
+        
+        .wrong-guesses {
+            color: #f38ba8;
+            font-weight: bold;
+        }
+        
+        .guessed-letters {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .game-over {
+            background: #f38ba8;
+            color: #1e1e2e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .win {
+            background: #a6e3a1;
+            color: #1e1e2e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 The Word Guesser Game 🎮</h1>
+        
+        <div class="word-display" id="wordDisplay">_ _ _ _</div>
+        
+        <div class="hangman-display" id="hangmanDisplay"></div>
+        
+        <div class="input-section">
+            <input type="text" id="letterInput" maxlength="1" placeholder="?">
+            <button onclick="makeGuess()">Guess Letter</button>
+        </div>
+        
+        <div class="info">
+            <div>💰 Total Reward: $<span id="reward">0</span></div>
+            <div class="wrong-guesses">❌ Wrong Guesses: <span id="wrongCount">0</span>/6</div>
+            <div class="guessed-letters">Guessed Letters: <span id="guessedLetters"></span></div>
+        </div>
+        
+        <div id="message"></div>
+        
+        <button onclick="resetGame()" style="background: #cba6f7; color: #1e1e2e; font-weight: bold;">Reset Game</button>
+    </div>
+
+    <script>
+        // Game state
+        var wordLetters = ['C', 'O', 'D', 'E'];
+        var guessedLetters = ['_', '_', '_', '_'];
+        var totalReward = 0;
+        var guessedLettersList = [];
+        var wrongGuesses = 0;
+        var maxWrongGuesses = 6;
+        var gameOver = false;
+
+        // ASCII Art for hangman
+        var hangmanArt = [
+            "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========="
+        ];
+
+        function generateReward() {
+            return Math.floor(Math.random() * 100) + 10;
+        }
+
+        function updateDisplay() {
+            document.getElementById('wordDisplay').textContent = guessedLetters.join(' ');
+            document.getElementById('hangmanDisplay').textContent = hangmanArt[wrongGuesses];
+            document.getElementById('reward').textContent = totalReward;
+            document.getElementById('wrongCount').textContent = wrongGuesses;
+            document.getElementById('guessedLetters').textContent = guessedLettersList.join(', ');
+        }
+
+        function makeGuess() {
+            if (gameOver) return;
+            
+            var letter = document.getElementById('letterInput').value.toUpperCase();
+            if (!letter || letter.length !== 1) {
+                showMessage('Please enter a single letter!', 'error');
+                return;
+            }
+
+            if (guessedLettersList.includes(letter)) {
+                showMessage(`You already guessed "${letter}"! Try a different letter.`, 'error');
+                return;
+            }
+
+            guessedLettersList.push(letter);
+            var goodGuess = false;
+            var lettersFound = 0;
+            var moreToGuess = false;
+
+            for (var i = 0; i < wordLetters.length; i++) {
+                if (wordLetters[i] === letter) {
+                    guessedLetters[i] = letter;
+                    goodGuess = true;
+                    lettersFound++;
+                }
+                if (guessedLetters[i] === '_') {
+                    moreToGuess = true;
+                }
+            }
+
+            if (goodGuess) {
+                var reward = generateReward() * lettersFound;
+                totalReward += reward;
+                showMessage(`🎉 Awesome! You found "${letter}"! (${lettersFound} letter${lettersFound > 1 ? 's' : ''}) - You earned $${reward}!`, 'success');
+                
+                if (!moreToGuess) {
+                    gameOver = true;
+                    showMessage('🏆 CONGRATULATIONS! YOU WON THE GAME! 🏆', 'win');
+                }
+            } else {
+                wrongGuesses++;
+                totalReward = Math.max(0, totalReward - 10);
+                showMessage(`❌ Oops! "${letter}" is not in the word. You lost $10!`, 'error');
+                
+                if (wrongGuesses >= maxWrongGuesses) {
+                    gameOver = true;
+                    showMessage('💀 GAME OVER! The hangman is complete!', 'game-over');
+                }
+            }
+
+            updateDisplay();
+            document.getElementById('letterInput').value = '';
+        }
+
+        function showMessage(text, type) {
+            var messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = type;
+        }
+
+        function resetGame() {
+            wordLetters = ['C', 'O', 'D', 'E'];
+            guessedLetters = ['_', '_', '_', '_'];
+            totalReward = 0;
+            guessedLettersList = [];
+            wrongGuesses = 0;
+            gameOver = false;
+            updateDisplay();
+            showMessage('Game reset! Good luck!', '');
+        }
+
+        // Allow Enter key to guess
+        document.getElementById('letterInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeGuess();
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
