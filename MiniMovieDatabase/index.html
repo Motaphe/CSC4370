@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mini Movie Database</title>
+    <style>
+      /* Catppuccin (Mocha) */
+      :root { --base:#1e1e2e; --text:#cdd6f4; --subtext:#bac2de; --surface:#313244; --overlay:#45475a; --accent:#89b4fa; --accent2:#f38ba8; }
+      html,body{ margin:0; padding:0; background:var(--base); color:var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+      .wrap{ max-width:760px; margin:32px auto; padding:16px 20px; background:var(--surface); border:1px solid var(--overlay); border-radius:8px; }
+      h1{ margin:0 0 8px 0; font-size:1.6rem; color:var(--accent); }
+      p{ margin:8px 0; color:var(--subtext); }
+      code{ background:var(--overlay); color:var(--text); padding:2px 6px; border-radius:4px; }
+      a{ color:var(--accent2); text-decoration: none; }
+      a:hover{ text-decoration: underline; }
+      .note{ font-size:0.95rem; margin-top:12px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>The Movie Database (Mini)</h1>
+      <p>
+        This page runs a small script that builds movies, checks <code>isShortFilm</code>
+        and <code>criticsPick</code>, and prints results to the browser console.
+      </p>
+      <p class="note">Open DevTools → Console to see the output.</p>
+      <div id="controls" class="note">
+        <button id="showAll">Show All</button>
+        <button id="showShort">Short Films</button>
+        <button id="showCritics">Critics' Picks</button>
+      </div>
+      <div id="app"></div>
+    </div>
+
+    <script>
+      // Constructor for a movie object
+      function Movie(title, durationMinutes, stars, ratingOutOf5, viewed) {
+        this.title = title;               // string
+        this.duration = Number(durationMinutes); // number (minutes)
+        this.stars = Array.isArray(stars) ? stars : []; // array of strings
+        this.rating = Number(ratingOutOf5); // number 0-5
+        this.viewed = Boolean(viewed);     // boolean
+      }
+
+      // Returns true if running time is less than 40 minutes
+      function isShortFilm(movie) { return Number(movie?.duration) < 40; }
+
+      // Returns true if rating > 4 and you have not seen it
+      function criticsPick(movie) { return Number(movie?.rating) > 4 && !Boolean(movie?.viewed); }
+
+      // Famous horror movies and one horror short
+      const movies = [
+        new Movie("The Exorcist (1973)", 122, ["Ellen Burstyn", "Max von Sydow"], 4.7, true),
+        new Movie("Get Out (2017)", 104, ["Daniel Kaluuya", "Allison Williams"], 4.6, true),
+        new Movie("Hereditary (2018)", 127, ["Toni Collette", "Alex Wolff"], 4.5, false),
+        new Movie("The Witch (2015)", 92, ["Anya Taylor-Joy", "Ralph Ineson"], 4.3, true),
+        // Short horror film (to exercise isShortFilm)
+        new Movie("Lights Out (2013 short)", 3, ["Lotta Losten"], 4.6, false)
+      ];
+
+      // Print titles that are short films, and whether each is a critics pick
+      console.log("=== Mini Movie Database Output ===");
+      movies.forEach((m, i) => {
+        const shortFlag = isShortFilm(m);
+        const criticsFlag = criticsPick(m);
+        console.log(`${i+1}. ${m.title} — shortFilm: ${shortFlag} | criticsPick: ${criticsFlag}`);
+      });
+
+      // Explicit list of the titles that are short films
+      const shortTitles = movies.filter(isShortFilm).map(m => m.title);
+      console.log("Short Film Titles:", shortTitles);
+
+      // Explicit tests for the two functions
+      const testMovieShort = new Movie("Test Short", 15, ["Tester"], 3.9, false);
+      const testMovieCritics = new Movie("Test Critics", 120, ["Reviewer"], 4.8, false);
+      console.log("isShortFilm(Test Short):", isShortFilm(testMovieShort)); // true
+      console.log("criticsPick(Test Critics):", criticsPick(testMovieCritics)); // true
+
+      // Minimal UI rendering 
+      function createBadge(text) {
+        const span = document.createElement('span');
+        span.textContent = text;
+        span.style.marginLeft = '8px';
+        span.style.padding = '2px 6px';
+        span.style.borderRadius = '4px';
+        span.style.fontSize = '0.8rem';
+        span.style.background = 'var(--overlay)';
+        span.style.color = 'var(--text)';
+        return span;
+      }
+
+      function renderMovies(filter) {
+        const container = document.getElementById('app');
+        container.innerHTML = '';
+        const list = document.createElement('ul');
+        list.style.listStyle = 'none';
+        list.style.padding = '0';
+        list.style.margin = '0';
+
+        let data = movies;
+        if (filter === 'short') data = movies.filter(isShortFilm);
+        if (filter === 'critics') data = movies.filter(criticsPick);
+
+        data.forEach(m => {
+          const item = document.createElement('li');
+          item.style.padding = '8px 0';
+          item.style.borderBottom = '1px solid var(--overlay)';
+          const title = document.createElement('strong');
+          title.textContent = m.title;
+          item.appendChild(title);
+
+          if (isShortFilm(m)) item.appendChild(createBadge('Short Film'));
+          if (criticsPick(m)) item.appendChild(createBadge("Critics' Pick"));
+
+          const meta = document.createElement('div');
+          meta.style.color = 'var(--subtext)';
+          meta.style.fontSize = '0.9rem';
+          meta.textContent = `Duration: ${m.duration}m · Rating: ${m.rating} · Viewed: ${m.viewed ? 'Yes' : 'No'}`;
+          item.appendChild(meta);
+
+          list.appendChild(item);
+        });
+
+        container.appendChild(list);
+      }
+
+      // Wire up simple filters
+      document.getElementById('showAll').addEventListener('click', () => renderMovies('all'));
+      document.getElementById('showShort').addEventListener('click', () => renderMovies('short'));
+      document.getElementById('showCritics').addEventListener('click', () => renderMovies('critics'));
+
+      // Initial render
+      renderMovies('all');
+
+    </script>
+  </body>
+  </html>
+
+
