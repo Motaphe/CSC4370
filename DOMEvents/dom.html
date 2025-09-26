@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. House - Diagnostic Interface</title>
+    <style>
+        /* Catppuccin Color Palette */
+        :root {
+            --rosewater: #f4dbd6;
+            --flamingo: #f0c6c6;
+            --pink: #f5bde6;
+            --mauve: #c6a0f6;
+            --red: #ed8796;
+            --maroon: #ee99a0;
+            --peach: #f5a97f;
+            --yellow: #eed49f;
+            --green: #a6da95;
+            --teal: #8bd5ca;
+            --sky: #91d7e3;
+            --sapphire: #7dc4e4;
+            --blue: #8aadf4;
+            --lavender: #b7bdf8;
+            --text: #cad3f5;
+            --subtext1: #b8c0e0;
+            --subtext0: #a5adcb;
+            --overlay2: #939ab7;
+            --overlay1: #8087a2;
+            --overlay0: #6e738d;
+            --surface2: #5b6078;
+            --surface1: #494d64;
+            --surface0: #363a4f;
+            --base: #24273a;
+            --mantle: #1e2030;
+            --crust: #181926;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--base);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--surface0), var(--surface1));
+            border-radius: 15px;
+            border: 2px solid var(--mauve);
+        }
+
+        .header h1 {
+            color: var(--mauve);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: var(--subtext1);
+            font-size: 1.2em;
+        }
+
+        .controls-section {
+            background: var(--surface0);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--blue);
+        }
+
+        .controls-section h2 {
+            color: var(--blue);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .color-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .color-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .color-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .color-btn:active {
+            transform: translateY(0);
+        }
+
+        .red-btn {
+            background: linear-gradient(45deg, var(--red), #ff6b6b);
+            color: white;
+        }
+
+        .yellow-btn {
+            background: linear-gradient(45deg, var(--yellow), #ffd93d);
+            color: var(--base);
+        }
+
+        .green-btn {
+            background: linear-gradient(45deg, var(--green), #6bcf7f);
+            color: white;
+        }
+
+        .black-btn {
+            background: linear-gradient(45deg, var(--crust), #2c2c2c);
+            color: var(--text);
+        }
+
+        .random-btn {
+            background: linear-gradient(45deg, var(--mauve), var(--pink));
+            color: white;
+        }
+
+        .gallery-section {
+            background: var(--surface0);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid var(--green);
+        }
+
+        .gallery-section h2 {
+            color: var(--green);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .image-title {
+            font-size: 1.5em;
+            color: var(--mauve);
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .gallery-image {
+            max-width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 3px solid var(--mauve);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-image:hover {
+            transform: scale(1.02);
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, var(--green), #6bcf7f);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .next-btn:active {
+            transform: translateY(0);
+        }
+
+        .diagnosis-text {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+            color: var(--subtext1);
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .color-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .color-btn {
+                width: 200px;
+            }
+            
+            .gallery-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Dr. House Diagnostic Interface</h1>
+            <p>Advanced Medical Imaging & Diagnostic Tools</p>
+        </div>
+
+        <div class="controls-section">
+            <h2>🎨 Diagnostic Environment Controls</h2>
+            <div class="color-buttons">
+                <button class="color-btn red-btn" onclick="changeBackground('red')">Red</button>
+                <button class="color-btn yellow-btn" onclick="changeBackground('yellow')">Yellow</button>
+                <button class="color-btn green-btn" onclick="changeBackground('green')">Green</button>
+                <button class="color-btn black-btn" onclick="changeBackground('black')">Black</button>
+                <button class="color-btn random-btn" onclick="changeBackground('random')">Random</button>
+            </div>
+        </div>
+
+        <div class="gallery-section">
+            <h2>🔬 Medical Imaging Gallery</h2>
+            <div class="image-container">
+                <div class="image-title" id="imageTitle">Dr. Gregory House</div>
+                <img class="gallery-image" id="galleryImage" src="https://lh5.googleusercontent.com/proxy/OnZfuQmdUj7W4zn2hlraAWV5f_D7QmGBR5XYcFwFCqFwPtf4PmYHikwE5XQhJVzXka7Pj1JUck_us259PGrPmQ" alt="Dr. House">
+                <button class="next-btn" onclick="nextImage()">Next Case</button>
+            </div>
+            <div class="diagnosis-text" id="diagnosisText">
+                "It's never lupus... except when it is."
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Color changing functionality
+        function changeBackground(color) {
+            const body = document.body;
+            const colors = {
+                red: '#ed8796',
+                yellow: '#eed49f', 
+                green: '#a6da95',
+                black: '#181926'
+            };
+            
+            if (color === 'random') {
+                const colorKeys = Object.keys(colors);
+                const randomColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+                body.style.backgroundColor = colors[randomColor];
+            } else {
+                body.style.backgroundColor = colors[color];
+            }
+        }
+
+        // Image gallery functionality
+        const images = [
+            {
+                src: 'https://lh5.googleusercontent.com/proxy/OnZfuQmdUj7W4zn2hlraAWV5f_D7QmGBR5XYcFwFCqFwPtf4PmYHikwE5XQhJVzXka7Pj1JUck_us259PGrPmQ',
+                title: 'Dr. Gregory House',
+                diagnosis: '"It\'s never lupus... except when it is."'
+            },
+            {
+                src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLtQgpJ92AayDVlT17VEmoG6yglbx_1dpmtQ&s',
+                title: 'Princeton-Plainsboro Teaching Hospital',
+                diagnosis: '"Everybody lies."'
+            },
+            {
+                src: 'https://lh3.googleusercontent.com/proxy/0pFYXlTosH_woRAeEhij4jleYz9E8O7Fn8jM-Z9oT7RrH8VVal8oADXb45ck-Vj0DdBy2Qaxj_oS4Cy58VJ6rmncVskp6c4s',
+                title: 'Diagnostic Team',
+                diagnosis: '"The patient is always lying."'
+            },
+            {
+                src: 'https://external-preview.redd.it/zBsnM0Z2JyMYW9nQHGdkHx7LVDo5FSpy1Qu_vD_5e00.jpg?auto=webp&s=969921ccaf6094d08f110e9d311686afa4787de5',
+                title: 'House\'s Office',
+                diagnosis: '"I\'m not a nice person."'
+            },
+            {
+                src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnE_DUgqQE8AcWeLwx_08Ikq06ke0mrcJvmg&s',
+                title: 'Dr. House - Comically Shocked',
+                diagnosis: '"What?! That\'s impossible!"'
+            }
+        ];
+
+        let currentImageIndex = 0;
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            const currentImage = images[currentImageIndex];
+            
+            document.getElementById('galleryImage').src = currentImage.src;
+            document.getElementById('imageTitle').textContent = currentImage.title;
+            document.getElementById('diagnosisText').textContent = currentImage.diagnosis;
+        }
+
+        // Initialize with first image
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstImage = images[0];
+            document.getElementById('galleryImage').src = firstImage.src;
+            document.getElementById('imageTitle').textContent = firstImage.title;
+            document.getElementById('diagnosisText').textContent = firstImage.diagnosis;
+        });
+    </script>
+</body>
+</html>
