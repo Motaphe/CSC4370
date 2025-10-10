@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Review Database - Home</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Music Review Database</h1>
+            <p>Share your thoughts on your favorite music and discover new artists</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;">
+            <div style="background: var(--surface0); padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+                <h2 style="color: var(--lavender); margin-bottom: 20px;">Add Review</h2>
+                <p style="color: var(--subtext1); margin-bottom: 25px;">Share your thoughts on your favorite tracks and help others discover great music.</p>
+                <a href="/musicreview" class="btn">Write a Review</a>
+            </div>
+
+            <div style="background: var(--surface0); padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+                <h2 style="color: var(--lavender); margin-bottom: 20px;">Browse Reviews</h2>
+                <p style="color: var(--subtext1); margin-bottom: 25px;">Explore reviews by different artists and discover new music through community recommendations.</p>
+                <a href="/selectreview" class="btn">View Reviews</a>
+            </div>
+        </div>
+
+        <div style="background: var(--surface0); padding: 30px; border-radius: 15px; margin-top: 40px; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+            <h2 style="color: var(--lavender); margin-bottom: 20px;">About This Project</h2>
+            <p style="color: var(--subtext1); line-height: 1.6; max-width: 600px; margin: 0 auto;">
+                This music review database allows you to store and browse music reviews with detailed information about artists, 
+                albums, tracks, and reviewer ratings. Built with Express.js, MySQL, and styled with the beautiful Catppuccin theme.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

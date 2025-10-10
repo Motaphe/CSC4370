@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Review Database - Select Artist</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Music Review Database</h1>
+            <p>Select an artist to view their reviews</p>
+        </div>
+
+        <div class="navigation">
+            <a href="/" class="btn btn-secondary">Home</a>
+            <a href="/musicreview" class="btn btn-secondary">Add Review</a>
+        </div>
+
+        <div class="dropdown-container">
+            <h2>Choose an Artist</h2>
+            <form action="/viewreviews" method="GET">
+                <div class="form-group">
+                    <label for="artist_id">Select Artist:</label>
+                    <select id="artist_id" name="artist_id" required>
+                        <option value="">-- Select an Artist --</option>
+                        <!-- Artists will be populated by server-side code -->
+                    </select>
+                </div>
+                <button type="submit" class="btn">View Reviews</button>
+            </form>
+        </div>
+
+        <div id="loading" style="text-align: center; margin-top: 20px; display: none;">
+            <p style="color: var(--subtext1);">Loading artists...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingDiv = document.getElementById('loading');
+            const selectElement = document.getElementById('artist_id');
+            
+            // Show loading indicator
+            loadingDiv.style.display = 'block';
+            
+            // Fetch artists from the server
+            fetch('/api/artists')
+                .then(response => response.json())
+                .then(artists => {
+                    loadingDiv.style.display = 'none';
+                    
+                    if (artists.length === 0) {
+                        selectElement.innerHTML = '<option value="">No artists found</option>';
+                        return;
+                    }
+                    
+                    // Populate the dropdown
+                    artists.forEach(artist => {
+                        const option = document.createElement('option');
+                        option.value = artist.artist_id;
+                        option.textContent = artist.artist_name;
+                        selectElement.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    loadingDiv.style.display = 'none';
+                    console.error('Error fetching artists:', error);
+                    selectElement.innerHTML = '<option value="">Error loading artists</option>';
+                });
+        });
+    </script>
+</body>
+</html>

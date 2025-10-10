@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Review Database - View Reviews</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Music Review Database</h1>
+            <p>Reviews for <span id="artist-name">Loading...</span></p>
+        </div>
+
+        <div class="navigation">
+            <a href="/" class="btn btn-secondary">Home</a>
+            <a href="/musicreview" class="btn btn-secondary">Add Review</a>
+            <a href="/selectreview" class="btn btn-secondary">Select Artist</a>
+        </div>
+
+        <div id="loading" style="text-align: center; margin: 40px 0;">
+            <p style="color: var(--subtext1); font-size: 1.2rem;">Loading reviews...</p>
+        </div>
+
+        <div id="error-message" class="error-message" style="display: none;">
+            <p>Error loading reviews. Please try again.</p>
+        </div>
+
+        <div id="no-reviews" style="text-align: center; margin: 40px 0; display: none;">
+            <div style="background: var(--surface0); padding: 40px; border-radius: 15px;">
+                <h2 style="color: var(--subtext1); margin-bottom: 20px;">No Reviews Found</h2>
+                <p style="color: var(--subtext0); margin-bottom: 20px;">This artist doesn't have any reviews yet.</p>
+                <a href="/musicreview" class="btn">Be the first to review!</a>
+            </div>
+        </div>
+
+        <div id="artist-info" class="artist-info" style="display: none;">
+            <img id="artist-picture" class="artist-picture" src="" alt="Artist Picture">
+            <div class="artist-details">
+                <h2 id="artist-name-display"></h2>
+                <p id="artist-description"></p>
+            </div>
+        </div>
+
+        <div id="reviews-container" style="display: none;">
+            <h2 style="color: var(--lavender); margin-bottom: 30px; text-align: center;">Reviews</h2>
+            <div id="reviews-list"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const artistId = urlParams.get('artist_id');
+            
+            if (!artistId) {
+                showError('No artist selected');
+                return;
+            }
+            
+            loadArtistAndReviews(artistId);
+        });
+        
+        function loadArtistAndReviews(artistId) {
+            // Load artist info
+            fetch(`/api/artist/${artistId}`)
+                .then(response => response.json())
+                .then(artist => {
+                    if (artist.error) {
+                        showError(artist.error);
+                        return;
+                    }
+                    
+                    displayArtistInfo(artist);
+                    loadReviews(artistId);
+                })
+                .catch(error => {
+                    console.error('Error loading artist:', error);
+                    showError('Error loading artist information');
+                });
+        }
+        
+        function loadReviews(artistId) {
+            fetch(`/api/reviews/${artistId}`)
+                .then(response => response.json())
+                .then(reviews => {
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    if (reviews.error) {
+                        showError(reviews.error);
+                        return;
+                    }
+                    
+                    if (reviews.length === 0) {
+                        document.getElementById('no-reviews').style.display = 'block';
+                        return;
+                    }
+                    
+                    displayReviews(reviews);
+                })
+                .catch(error => {
+                    console.error('Error loading reviews:', error);
+                    showError('Error loading reviews');
+                });
+        }
+        
+        function displayArtistInfo(artist) {
+            document.getElementById('artist-name').textContent = artist.artist_name;
+            document.getElementById('artist-name-display').textContent = artist.artist_name;
+            document.getElementById('artist-description').textContent = artist.artist_description || 'No description available';
+            
+            const artistPicture = document.getElementById('artist-picture');
+            if (artist.artist_picture) {
+                artistPicture.src = artist.artist_picture;
+                artistPicture.alt = artist.artist_name;
+            } else {
+                artistPicture.src = 'https://via.placeholder.com/100x100/1e1e2e/ffffff?text=' + encodeURIComponent(artist.artist_name.charAt(0));
+            }
+            
+            document.getElementById('artist-info').style.display = 'flex';
+        }
+        
+        function displayReviews(reviews) {
+            const reviewsList = document.getElementById('reviews-list');
+            const reviewsContainer = document.getElementById('reviews-container');
+            
+            reviewsList.innerHTML = '';
+            
+            reviews.forEach(review => {
+                const reviewCard = document.createElement('div');
+                reviewCard.className = 'review-card';
+                
+                const stars = '⭐'.repeat(review.star_rating) + '☆'.repeat(5 - review.star_rating);
+                
+                reviewCard.innerHTML = `
+                    <div class="review-header">
+                        <div>
+                            <div class="review-title">${review.review_title}</div>
+                            <div class="review-meta">
+                                By ${review.reviewer_name} • ${new Date(review.created_at).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">${stars}</span>
+                        </div>
+                    </div>
+                    <div class="review-description">${review.review_description}</div>
+                    <div class="track-info">
+                        <img src="${review.track_artwork || 'https://via.placeholder.com/60x60/1e1e2e/ffffff?text=Track'}" 
+                             alt="Track Artwork" class="track-artwork">
+                        <div class="track-details">
+                            <h4>${review.track_title}</h4>
+                            <p>${formatDuration(review.track_length)} • ${review.artist_name}</p>
+                        </div>
+                    </div>
+                `;
+                
+                reviewsList.appendChild(reviewCard);
+            });
+            
+            reviewsContainer.style.display = 'block';
+        }
+        
+        function formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('error-message').querySelector('p').textContent = message;
+        }
+    </script>
+</body>
+</html>
