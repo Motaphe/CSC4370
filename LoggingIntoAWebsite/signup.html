@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Review Website</title>
+    <link rel="stylesheet" href="public/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🌟 Review Website</h1>
+            <div class="nav">
+                <a href="index.html">Home</a>
+                <a href="login.html">Login</a>
+                <a href="signup.html">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Sign Up</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="userName">Username</label>
+                    <input type="text" id="userName" name="userName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+            
+            <div id="message" style="margin-top: 15px; text-align: center;"></div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: var(--subtext0);">Already have an account? <a href="login.html" style="color: var(--blue);">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Client-side password confirmation validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (password !== confirmPassword) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.innerHTML = `<p style="color: var(--green);">${data.message}</p>`;
+                    // Redirect to login page after successful signup
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 1500);
+                } else {
+                    messageDiv.innerHTML = `<p style="color: var(--red);">${data.error}</p>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<p style="color: var(--red);">Signup failed. Please try again.</p>`;
+                console.error('Signup error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

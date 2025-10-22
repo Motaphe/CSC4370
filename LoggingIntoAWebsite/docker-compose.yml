@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: review_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: review
+      MYSQL_USER: reviewuser
+      MYSQL_PASSWORD: reviewpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - review_network
+    command: --innodb-buffer-pool-size=64M --innodb-log-file-size=16M --innodb-flush-log-at-trx-commit=2 --innodb-flush-method=O_DIRECT --skip-log-bin --skip-innodb-doublewrite --innodb-flush-neighbors=0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      timeout: 5s
+      retries: 6
+      interval: 2s
+      start_period: 10s
+
+  app:
+    build: 
+      context: .
+    container_name: review_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_USER: reviewuser
+      DB_PASSWORD: reviewpass
+      DB_NAME: review
+      DB_PORT: 3306
+    volumes:
+      - ./server.js:/app/server.js
+      - ./session_based_auth.js:/app/session_based_auth.js
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./login.html:/app/login.html
+      - ./signup.html:/app/signup.html
+      - /app/node_modules
+    networks:
+      - review_network
+    command: npm start
+
+volumes:
+  mysql_data:
+
+networks:
+  review_network:
+    driver: bridge
